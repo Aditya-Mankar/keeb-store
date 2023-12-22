@@ -1,0 +1,41 @@
+services:
+  keebDB:
+    container_name: keebDatabase
+    image: mysql
+    ports:
+      - '3308:3306'
+    environment:
+      MYSQL_DATABASE: keebDatabase
+      MYSQL_ROOT_PASSWORD: root
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 10s
+      retries: 10
+      interval: 10s
+      start_period: 10s
+    networks:
+      - keeb-store-net
+      
+  inventory-service:
+    image: 'adityamankar/inventory-service:v1'
+    container_name: inventory-service-ms
+    ports:
+      - '8081:8081'
+    environment:
+      SPRING_APPLICATION_NAME: "inventory-service"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://keebDatabase:3306/keebDatabase"
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      keebDB:
+        condition: service_healthy
+    networks:
+      - keeb-store-net
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+          
+networks:
+  keeb-store-net:
+    driver: "bridge"
