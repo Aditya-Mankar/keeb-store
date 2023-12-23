@@ -16,6 +16,14 @@ services:
     networks:
       - keeb-store-net
       
+  keebMongoDB:
+    image: mongo:latest
+    container_name: "keebMongoDB"
+    ports:
+      - 27017:27017
+    networks:
+      - keeb-store-net
+      
   inventory-service:
     image: 'adityamankar/inventory-service:v1'
     container_name: inventory-service-ms
@@ -29,6 +37,18 @@ services:
     depends_on:
       keebDB:
         condition: service_healthy
+    networks:
+      - keeb-store-net
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+          
+  user-service:
+    image: 'adityamankar/user-service:v1'
+    container_name: user-service-ms
+    ports:
+      - '8082:8082'
     networks:
       - keeb-store-net
     deploy:
