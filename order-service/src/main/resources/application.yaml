@@ -1,0 +1,12 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: "order-service"
+  data:
+    mongodb:
+      host: "keebMongoDB"
+      port: 27017
+      database: "Order"
+

@@ -55,6 +55,38 @@ services:
       resources:
         limits:
           memory: 700m
+  
+  order-service:
+    image: 'adityamankar/order-service:v1'
+    container_name: order-service-ms
+    ports:
+      - '8084:8084'
+    networks:
+      - keeb-store-net
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+          
+  product-service:
+    image: 'adityamankar/product-service:v1'
+    container_name: product-service-ms
+    ports:
+      - '8083:8083'
+    environment:
+      SPRING_APPLICATION_NAME: "product-service"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://keebDatabase:3306/keebDatabase"
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      keebDB:
+        condition: service_healthy
+    networks:
+      - keeb-store-net
+    deploy:
+      resources:
+        limits:
+          memory: 700m
           
 networks:
   keeb-store-net:
