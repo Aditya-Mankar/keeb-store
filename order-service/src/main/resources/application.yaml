@@ -9,4 +9,15 @@ spring:
       host: "keebMongoDB"
       port: 27017
       database: "Order"
+#  config:
+#    import: "configserver:http://localhost:8071/"
+#    profiles:
+#      active: "dev"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
 

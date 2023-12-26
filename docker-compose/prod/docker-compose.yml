@@ -1,0 +1,99 @@
+services:
+  keebDB:
+    container_name: keebDatabase
+    image: mysql
+    ports:
+      - '3308:3306'
+    environment:
+      MYSQL_DATABASE: keebDatabase
+      MYSQL_ROOT_PASSWORD: root
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 10s
+      retries: 10
+      interval: 10s
+      start_period: 10s
+    networks:
+      - keeb-store-net
+      
+  keebMongoDB:
+    image: mongo:latest
+    container_name: "keebMongoDB"
+    ports:
+      - 27017:27017
+    networks:
+      - keeb-store-net
+      
+  config-server:
+    image: 'adityamankar/config-server:v1'
+    container_name: config-server
+    ports:
+      - '8071:8071'
+    healthcheck:
+      test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s    
+    networks:
+      - keeb-store-net
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+      
+  inventory-service:
+    image: 'adityamankar/inventory-service:v1'
+    container_name: inventory-service-ms
+    ports:
+      - '8081:8081'
+    environment:
+      SPRING_APPLICATION_NAME: "inventory-service"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://keebDatabase:3306/keebDatabase"
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      keebDB:
+        condition: service_healthy
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+      
+  user-service:
+    image: 'adityamankar/user-service:v1'
+    container_name: user-service-ms
+    ports:
+      - '8082:8082'
+    extends:
+      file: common-config.yml
+      service: microservice-base-config    
+  
+  order-service:
+    image: 'adityamankar/order-service:v1'
+    container_name: order-service-ms
+    ports:
+      - '8084:8084'
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+          
+  product-service:
+    image: 'adityamankar/product-service:v1'
+    container_name: product-service-ms
+    ports:
+      - '8083:8083'
+    environment:
+      SPRING_APPLICATION_NAME: "product-service"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://keebDatabase:3306/keebDatabase"
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      keebDB:
+        condition: service_healthy
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+      
+networks:
+  keeb-store-net:
+    driver: "bridge"
