@@ -1,7 +1,6 @@
 package com.keeb.userservice.service;
 
-//import com.keeb.userservice.configuration.ProductFeignClient;
-
+import com.keeb.userservice.configuration.ProductFeignClient;
 import com.keeb.userservice.model.Product;
 import com.keeb.userservice.model.User;
 import com.keeb.userservice.repository.UserRepository;
@@ -10,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
-//    private final ProductFeignClient productFeignClient;
+    private final ProductFeignClient productFeignClient;
 
     public ResponseEntity<Object> fetchUser(String emailId) {
         try {
@@ -74,24 +74,33 @@ public class UserService {
         }
     }
 
-//    public ResponseEntity<String> addProductToWishlist(String emailId, Long productId) {
-//        Optional<User> user = userRepository.findByEmailId(emailId);
-//
-//        ResponseEntity<List<Product>> productsResponse = productFeignClient.fetchProducts(List.of(productId));
-//        List<Product> products = productsResponse.getBody();
-//
-//        user.ifPresent(us -> {
-//            List<Product> wishlist = us.getWishlist();
-//            wishlist.add(products.get(0));
-//            us.setWishlist(wishlist);
-//
-//            userRepository.save(us);
-//        });
-//
-//        log.info("Added product with id: " + productId + " to wishlist of user with emailId: " + emailId);
-//
-//        return ResponseEntity.ok("Product added to wishlist");
-//    }
+    public ResponseEntity<String> addProductToWishlist(String emailId, Long productId) {
+        try {
+            Optional<User> user = userRepository.findByEmailId(emailId);
+
+            ResponseEntity<List<Product>> productsResponse = productFeignClient.fetchProducts(List.of(productId));
+            List<Product> products = productsResponse.getBody();
+
+            user.ifPresent(us -> {
+                List<Product> wishlist = new ArrayList<>();
+
+                if (us.getWishlist() != null)
+                    wishlist = us.getWishlist();
+
+                wishlist.add(products.get(0));
+                us.setWishlist(wishlist);
+
+                userRepository.save(us);
+            });
+
+            log.info("Added product with id: " + productId + " to wishlist of user with emailId: " + emailId);
+
+            return ResponseEntity.ok("Product added to wishlist");
+        } catch (Exception e) {
+            log.info("Error while adding product to wishlist " + e);
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
 
     public ResponseEntity<String> removeProductFromWishlist(String emailId, Long productId) {
         try {

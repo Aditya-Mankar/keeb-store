@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface ImageRepository extends JpaRepository<Image, Long> {
 
-    @Query(value = "SELECT * FROM Image WHERE product_id = :productId", nativeQuery = true)
+    @Query(value = "SELECT * FROM image WHERE product_id = :productId", nativeQuery = true)
     public Optional<Image> findByProductId(Long productId);
 
 }

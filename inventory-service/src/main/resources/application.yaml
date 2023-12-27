@@ -12,14 +12,29 @@ spring:
   jpa:
     hibernate:
       ddl-auto: "update"
-#  config:
-#    import: "configserver:http://localhost:8071/"
-#  profiles:
-#    active: "dev"
+  config:
+    import: "optional:configserver:http://localhost:8071/"
+  profiles:
+    active: "dev"
 
 management:
   endpoints:
     web:
       exposure:
         include: "*"
+
+eureka:
+  instance:
+    preferIpAddress: "true"
+  client:
+    fetchRegistry: "true"
+    registerWithEureka: "true"
+    serviceUrl:
+      defaultZone: "http://localhost:8070/eureka/"
+
+info:
+  app:
+    name: "inventory-service"
+    description: "inventory-service for keeb-store application"
+    version: "1.0.0"
 

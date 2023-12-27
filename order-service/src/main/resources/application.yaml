@@ -9,10 +9,10 @@ spring:
       host: "keebMongoDB"
       port: 27017
       database: "Order"
-#  config:
-#    import: "configserver:http://localhost:8071/"
-#    profiles:
-#      active: "dev"
+  config:
+    import: "optional:configserver:http://localhost:8071/"
+  profiles:
+    active: "dev"
 
 management:
   endpoints:
@@ -20,4 +20,17 @@ management:
       exposure:
         include: "*"
 
+eureka:
+  instance:
+    preferIpAddress: "true"
+  client:
+    fetchRegistry: "true"
+    registerWithEureka: "true"
+    serviceUrl:
+      defaultZone: "http://localhost:8070/eureka/"
 
+info:
+  app:
+    name: "order-service"
+    description: "order-service for keeb-store application"
+    version: "1.0.0"

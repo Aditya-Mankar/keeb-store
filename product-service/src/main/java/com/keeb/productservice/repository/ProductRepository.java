@@ -11,10 +11,10 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    @Query(value = "SELECT * FROM Product WHERE id = :id", nativeQuery = true)
+    @Query(value = "SELECT * FROM product WHERE id = :id", nativeQuery = true)
     public Optional<Product> findByProductId(Long id);
 
-    @Query(value = "SELECT * FROM Product WHERE id IN (:productIds)", nativeQuery = true)
+    @Query(value = "SELECT * FROM product WHERE id IN (:productIds)", nativeQuery = true)
     public List<Product> fetchProducts(List<Long> productIds);
 
 }

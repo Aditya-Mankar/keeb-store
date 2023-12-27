@@ -12,17 +12,17 @@ import java.util.List;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-    @Query(value = "SELECT * FROM Review WHERE product_id = :productId", nativeQuery = true)
+    @Query(value = "SELECT * FROM review WHERE product_id = :productId", nativeQuery = true)
     public List<Review> findByProductId(Long productId);
 
     @Modifying
     @Transactional
-    @Query(value = "DELETE FROM Review WHERE product_id = :productId", nativeQuery = true)
+    @Query(value = "DELETE FROM review WHERE product_id = :productId", nativeQuery = true)
     public void deleteByProductId(Long productId);
 
     @Modifying
     @Transactional
-    @Query(value = "DELETE FROM Review WHERE id = :id", nativeQuery = true)
+    @Query(value = "DELETE FROM review WHERE id = :id", nativeQuery = true)
     public void deleteById(Long id);
 
 }

@@ -23,19 +23,19 @@ public class OrderController {
         return orderService.fetchOrderById(orderId);
     }
 
-//    @PostMapping("/create")
-//    public ResponseEntity<Object> createOrder(@RequestBody Order order) {
-//        return orderService.createOrder(order);
-//    }
+    @PostMapping("/create")
+    public ResponseEntity<Object> createOrder(@RequestBody Order order) {
+        return orderService.createOrder(order);
+    }
 
     @PutMapping("/update")
     public ResponseEntity<String> updateOrder(@RequestBody Order order) {
         return orderService.updateOrder(order);
     }
 
-//    @DeleteMapping("/delete/{orderId}")
-//    public ResponseEntity<String> deleteOrder(@PathVariable String orderId) {
-//        return orderService.deleteOrder(orderId);
-//    }
+    @DeleteMapping("/delete/{orderId}")
+    public ResponseEntity<String> deleteOrder(@PathVariable String orderId) {
+        return orderService.deleteOrder(orderId);
+    }
 
 }

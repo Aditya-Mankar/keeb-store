@@ -33,10 +33,10 @@ public class UserController {
         return userService.deleteUser(emailId);
     }
 
-//    @PostMapping("/wishlist/add/{emailId}/{productId}")
-//    public ResponseEntity<String> addProductToWishlist(@PathVariable String emailId, @PathVariable Long productId) {
-//        return userService.addProductToWishlist(emailId, productId);
-//    }
+    @PostMapping("/wishlist/add/{emailId}/{productId}")
+    public ResponseEntity<String> addProductToWishlist(@PathVariable String emailId, @PathVariable Long productId) {
+        return userService.addProductToWishlist(emailId, productId);
+    }
 
     @DeleteMapping("/wishlist/delete/{emailId}/{productId}")
     public ResponseEntity<String> removeProductFromWishlist(@PathVariable String emailId, @PathVariable Long productId) {
