@@ -59,6 +59,17 @@ services:
       file: common-config.yml
       service: base-config
       
+  api-gateway:
+    image: 'adityamankar/api-gateway:v1'
+    container_name: api-gateway
+    ports:
+      - '8072:8072'
+    environment:
+      SPRING_APPLICATION_NAME: "api-gateway"
+    extends:
+      file: common-config.yml
+      service: microservice-base-config  
+      
   inventory-service:
     image: 'adityamankar/inventory-service:v1'
     container_name: inventory-service-ms

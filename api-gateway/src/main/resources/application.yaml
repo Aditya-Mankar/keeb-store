@@ -1,0 +1,26 @@
+server:
+  port: 8072
+
+spring:
+  application:
+    name: "api-gateway"
+  config:
+    import: "optional:configserver:http://localhost:8071/"
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lowerCaseServiceId: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+info:
+  app:
+    name: "api-gateway"
+    description: "api-gateway for keeb-store application"
+    version: "1.0.0"
