@@ -2,6 +2,7 @@ package com.keeb.orderservice.service;
 
 import com.keeb.orderservice.configuration.InventoryFeignClient;
 import com.keeb.orderservice.configuration.UserFeignClient;
+import com.keeb.orderservice.dto.OrderDto;
 import com.keeb.orderservice.exception.BadRequestException;
 import com.keeb.orderservice.exception.CustomException;
 import com.keeb.orderservice.model.Order;
@@ -10,8 +11,8 @@ import com.keeb.orderservice.model.User;
 import com.keeb.orderservice.repository.OrderRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.http.ResponseEntity;
-//import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final InventoryFeignClient inventoryFeignClient;
     private final UserFeignClient userFeignClient;
-//    private final KafkaTemplate<String, Order> kafkaTemplate;
+    private final StreamBridge streamBridge;
 
     public ResponseEntity<Object> fetchAllOrders() {
         try {
@@ -106,7 +107,12 @@ public class OrderService {
                 userFeignClient.updateUser(user);
             }
 
-//            kafkaTemplate.send("orderCreatedTopic", savedOrder);
+            OrderDto orderNotification = new OrderDto(savedOrder.getId(), savedOrder.getOrderedBy(),
+                    savedOrder.getAmount(), savedOrder.getAddress(), savedOrder.getPaymentMethod(), savedOrder.getPaymentStatus());
+
+            log.info("Sending order creation email request for the details: " + orderNotification);
+            var result = streamBridge.send("sendOrderCreatedEmail-out-0", orderNotification);
+            log.info("Order creation email response " + result);
 
             log.info("Created order having id: " + savedOrder.getId());
 
@@ -153,8 +159,6 @@ public class OrderService {
                 user.setOrders(updatedOrders);
 
                 userFeignClient.updateUser(user);
-
-//            kafkaTemplate.send("orderDeletedTopic", deletedOrder);
             });
 
             log.info("Deleted order having id: " + orderId);

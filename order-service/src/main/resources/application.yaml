@@ -13,6 +13,15 @@ spring:
     import: "optional:configserver:http://localhost:8071/"
   profiles:
     active: "dev"
+  cloud:
+    stream:
+      bindings:
+        sendOrderCreatedEmail-out-0:
+          destination: send-order-created-email
+      kafka:
+        binder:
+          brokers:
+            - localhost:9092
 
 management:
   endpoints:
